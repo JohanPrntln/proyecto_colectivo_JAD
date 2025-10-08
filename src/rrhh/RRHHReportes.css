@@ -1,0 +1,53 @@
+.rrhh-reportes-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding-top: 80px;
+}
+
+.rrhh-reportes-container h2 {
+  font-weight: 700;
+  color: #1a73e8;
+}
+
+.card {
+  border-radius: 12px;
+}
+
+.tabla-reportes {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.kpi-row {
+  margin-top: 10px;
+}
+
+.kpi-card {
+  border-radius: 12px;
+  padding: 18px 0 12px 0;
+  text-align: center;
+  color: #fff;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.kpi-blue { background: #1a73e8; }
+.kpi-green { background: #43a047; }
+.kpi-yellow { background: #fbc02d; color: #222; }
+.kpi-red { background: #e53935; }
+
+.kpi-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.kpi-value {
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.kpi-desc {
+  font-size: 0.95rem;
+  opacity: 0.85;
+}

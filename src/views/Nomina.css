@@ -1,0 +1,52 @@
+.nomina-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .nomina-container h1 {
+    text-align: center;
+    color: #007bff;
+    margin-bottom: 20px;
+  }
+  
+  .datos-empleado p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+  
+  .nomina-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .nomina-table th,
+  .nomina-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .nomina-table th {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .deducciones-header {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  .total-deducciones td,
+  .salario-neto td {
+    font-weight: bold;
+  }
+  
+  .salario-neto {
+    background-color: #d4edda;
+    color: #155724;
+  }

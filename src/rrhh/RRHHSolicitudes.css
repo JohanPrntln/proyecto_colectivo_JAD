@@ -1,0 +1,29 @@
+.rrhh-solicitudes-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-top: 40px;
+}
+
+.solicitud-card {
+  border-radius: 12px;
+  border: 1px solid #e3e3e3;
+  transition: box-shadow 0.2s;
+}
+
+.solicitud-card:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+.mensaje-enviado {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #333;
+  font-size: 0.97rem;
+  border: 1px solid #e3e3e3;
+}
+
+.main-content,
+.rrhh-solicitudes-container {
+  padding-top: 80px; /* Ajusta el valor según la altura de tu navbar */
+}

@@ -1,0 +1,78 @@
+.asistencia-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .asistencia-container h1,
+  .asistencia-container h2 {
+    text-align: center;
+    color: #007bff;
+    margin-bottom: 20px;
+  }
+  
+  .asistencia-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+  }
+  
+  .asistencia-table th,
+  .asistencia-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .asistencia-table th {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .estado-ausente {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .calendario-presente {
+    background-color: #d4edda !important;
+  }
+  
+  .calendario-retraso {
+    background-color: #fff3cd !important;
+  }
+  
+  .calendario-ausente {
+    background-color: #f8d7da !important;
+  }
+  
+  .justificacion-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .justificacion-form textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  .justificacion-form button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .justificacion-form button:hover {
+    background-color: #0056b3;
+  }

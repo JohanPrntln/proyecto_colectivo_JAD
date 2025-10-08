@@ -1,0 +1,194 @@
+/* App.css */
+.carousel-container {
+  height: 10px; /* Altura fija para el contenedor */
+   
+}
+
+.carousel-item-wrapper img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  max-height: 400px;
+}
+/* App.css */
+.custom-carousel img {
+  width: 100%; /* Asegura que la imagen ocupe todo el ancho del contenedor */
+  height: 400px; /* Define una altura fija */
+  
+}
+
+
+.custom-carousel .carousel-caption {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 5px;
+}
+/* App.css */
+.navbar-brand img {
+  height: 100px; /* Ajusta el tamaño del logo */
+  width: auto;
+}
+
+.navbar {
+  padding: 10px 20px; /* Ajusta el espacio alrededor de la barra */
+}
+
+.navbar-nav .nav-link {
+  font-size: 16px;
+  font-weight: 500;
+  margin-right: 15px;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #007bff; /* Cambia el color al pasar el mouse */
+}
+
+/* App.css */
+.text-section h1 {
+  font-size: 3rem; /* Aumenta el tamaño del título */
+  font-weight: bold;
+  color: #343a40; /* Color oscuro para mejor contraste */
+  margin-bottom: 20px;
+}
+
+.text-section .description {
+  font-size: 2.2rem; /* Tamaño más grande para el texto descriptivo */
+  line-height: 1.8; /* Mejora la legibilidad */
+  color: #51575c; /* Color gris para un diseño moderno */
+}
+
+/* App.css */
+.modal-header {
+  background-color: #007bff;
+  color: white;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: center;
+}
+/* App.css */
+.benefits-section {
+  padding: 40px 20px;
+  background-color: #f8f9fa;
+}
+
+.benefit-icon {
+  height: 60px;
+  margin-bottom: 15px;
+}
+
+.benefits-section h4 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.benefits-section p {
+  color: #6c757d;
+}
+
+/* App.css */
+.testimonials-section {
+  padding: 40px 20px;
+  background-color: #ffffff;
+}
+
+blockquote {
+  font-size: 1.2rem;
+  font-style: italic;
+  color: #6c757d;
+}
+
+blockquote footer {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #343a40;
+}
+
+/* App.css */
+/* App.css */
+.cta-section {
+  padding: 50px 20px;
+  color: rgb(0, 0, 0); /* Texto blanco para contraste */
+  border-radius: 10px; /* Bordes redondeados */
+  margin-left: 20%; /* Mueve la sección hacia la izquierda */
+  max-width: 80%; /* Limita el ancho de la sección */
+}
+
+.cta-section h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.cta-section p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+/* App.css */
+.custom-button {
+  background-color: #007bff; /* Color azul */
+  color: white; /* Texto blanco */
+  font-size: 1.2rem; /* Tamaño del texto */
+  font-weight: bold; /* Texto en negrita */
+  padding: 10px 20px; /* Espaciado interno */
+  border: none; /* Sin bordes */
+  border-radius: 50px; /* Bordes redondeados */
+  display: inline-flex; /* Alineación del texto y el ícono */
+  align-items: center; /* Centrar contenido verticalmente */
+  justify-content: center; /* Centrar contenido horizontalmente */
+  gap: 10px; /* Espacio entre el texto y la flecha */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Animación */
+}
+
+.custom-button:hover {
+  background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+  transform: scale(1.05); /* Efecto de agrandamiento */
+}
+
+.custom-button .arrow {
+  font-size: 1.5rem; /* Tamaño de la flecha */
+  transition: transform 0.2s ease; /* Animación de la flecha */
+}
+
+.custom-button:hover .arrow {
+  transform: translateX(5px); /* Mueve la flecha hacia la derecha al pasar el mouse */
+}
+
+.benefit-icon {
+  width: 200px;
+  height: 200px;
+}
+
+/* App.css */
+.navbar {
+  display: flex;
+  justify-content: space-between; /* Distribuye los elementos hacia los extremos */
+  align-items: center; /* Alinea verticalmente los elementos */
+  padding: 0 10px; /* Reduce el espacio interno para mover todo hacia los bordes */
+}
+
+.navbar-brand {
+  margin-left: 0; /* Asegura que el logo esté completamente a la izquierda */
+}
+
+.navbar-nav {
+  display: flex;
+  gap: -150px; /* Espaciado entre los enlaces */
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Espaciado entre las acciones */
+  margin-left: auto; /* Empuja las acciones hacia la derecha */
+}
+.navbar {
+  display: flex;
+  justify-content: space-between; /* Distribuye los elementos hacia los extremos */
+  align-items: center; /* Alinea verticalmente los elementos */
+  background-color: #f8f9fa; /* Color de fondo */
+  padding: 10px 20px; /* Espaciado interno */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra para darle profundidad */
+}

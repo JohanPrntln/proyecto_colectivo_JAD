@@ -1,0 +1,56 @@
+.perfil-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .perfil-container h1,
+  .perfil-container h2 {
+    text-align: center;
+    color: #007bff;
+    margin-bottom: 20px;
+  }
+  
+  .datos-personales p {
+    margin: 5px 0;
+  }
+  
+  .datos-personales button,
+  .editar-form button,
+  .subir-documento-form button,
+  .cambiar-form button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .datos-personales button:hover,
+  .editar-form button:hover,
+  .subir-documento-form button:hover,
+  .cambiar-form button:hover {
+    background-color: #0056b3;
+  }
+  
+  .editar-form label,
+  .subir-documento-form label,
+  .cambiar-form label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .editar-form input,
+  .subir-documento-form input,
+  .cambiar-form input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }

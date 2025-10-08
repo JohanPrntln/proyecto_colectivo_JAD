@@ -1,0 +1,60 @@
+/* Contenedor principal */
+.login-container {
+    display: flex;
+  }
+  
+  /* Menú lateral fijo */
+  /* Menú lateral fijo */
+.menu-lateral {
+  width: 250px;
+  background-color: #007bff; /* Color azul */
+  height: 100vh;
+  position: fixed;
+  top: 70px; /* Espacio para la barra de navegación */
+  left: 0;
+  padding-top: 20px; /* Espaciado interno */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-list li {
+  margin: 20px 0;
+}
+
+.menu-list li a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.menu-list li a:hover {
+  background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+}
+  
+  /* Contenido principal */
+  .main-content {
+    margin-left: 270px; /* Espacio para el menú lateral */
+    padding: 20px;
+    width: calc(100% - 270px);
+  }
+  
+  /* Tarjetas de funciones */
+  .feature-card {
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .feature-card .btn {
+    margin-top: 10px;
+  }

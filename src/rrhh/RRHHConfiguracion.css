@@ -1,0 +1,23 @@
+.rrhh-configuracion-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 80px;
+}
+
+.rrhh-configuracion-container h2 {
+  font-weight: 700;
+  color: #1a73e8;
+}
+
+.card {
+  border-radius: 12px;
+}
+
+.list-group-item {
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.alert {
+  font-size: 1rem;
+}

@@ -1,0 +1,61 @@
+.formacion-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .formacion-container h1,
+  .formacion-container h2 {
+    text-align: center;
+    color: #007bff;
+    margin-bottom: 20px;
+  }
+  
+  .cursos-lista,
+  .certificados-lista {
+    margin-top: 20px;
+  }
+  
+  .curso-item,
+  .certificado-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+  }
+  
+  .curso-item h3,
+  .certificado-item h3 {
+    margin: 0 0 10px;
+  }
+  
+  .progreso-container {
+    width: 100%;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  
+  .progreso-barra {
+    height: 10px;
+    background-color: #007bff;
+  }
+  
+  .descargar-btn {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .descargar-btn:hover {
+    background-color: #0056b3;
+  }

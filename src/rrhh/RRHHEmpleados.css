@@ -1,0 +1,22 @@
+.rrhh-empleados-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 80px;
+}
+
+.rrhh-empleados-container h2 {
+  font-weight: 700;
+  color: #1a73e8;
+}
+
+.card {
+  border-radius: 12px;
+}
+
+.table th, .table td {
+  vertical-align: middle;
+}
+
+input[type="text"], textarea, select {
+  border-radius: 8px !important;
+}
