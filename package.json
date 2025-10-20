@@ -1,7 +1,7 @@
 {
   "name": "proyectocolectivo",
-  "version": "0.1.0",
-  "private": true,
+   "version": "0.1.0",
+   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.x.x",
     "@fortawesome/free-solid-svg-icons": "^6.x.x",
