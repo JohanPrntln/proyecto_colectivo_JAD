@@ -1,39 +1,77 @@
-const { pool } = require('../config/db');
+// ==========================
+// CONTROLADOR DE EMPLEADOS
+// ==========================
+// Aquí se reciben las peticiones HTTP del frontend o Postman,
+// se validan los datos y se llama al modelo para hacer la consulta.
 
-async function listarEmpleados(req, res, next) {
+const empleadoModelo = require("../modelos/empleadoModelo");
+
+// Obtener todos
+async function listarEmpleados(req, res) {
   try {
-    const [rows] = await pool.query('SELECT e.*, u.correo FROM empleados e LEFT JOIN usuarios u ON e.usuario_id = u.id');
-    res.json(rows);
-  } catch (err) { next(err); }
+    const empleados = await empleadoModelo.obtenerEmpleados();
+    res.json(empleados);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al obtener empleados", error });
+  }
 }
 
-async function crearEmpleado(req, res, next) {
+// Obtener uno por ID
+async function obtenerEmpleado(req, res) {
   try {
-    const { usuario_id, nombre_completo, documento, cargo, area, fecha_ingreso } = req.body;
-    const [r] = await pool.query(
-      'INSERT INTO empleados (usuario_id, nombre_completo, documento, cargo, area, fecha_ingreso) VALUES (?, ?, ?, ?, ?, ?)',
-      [usuario_id || null, nombre_completo, documento, cargo, area, fecha_ingreso || null]
-    );
-    res.status(201).json({ id: r.insertId });
-  } catch (err) { next(err); }
+    const { id } = req.params;
+    const empleado = await empleadoModelo.obtenerEmpleadoPorId(id);
+    if (!empleado) {
+      return res.status(404).json({ mensaje: "Empleado no encontrado" });
+    }
+    res.json(empleado);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al obtener empleado", error });
+  }
 }
 
-async function obtenerEmpleado(req, res, next) {
+// Crear nuevo
+async function crearEmpleado(req, res) {
   try {
-    const id = req.params.id;
-    const [rows] = await pool.query('SELECT e.*, u.correo FROM empleados e LEFT JOIN usuarios u ON e.usuario_id = u.id WHERE e.id = ?', [id]);
-    res.json(rows[0] || null);
-  } catch (err) { next(err); }
+    const nuevoId = await empleadoModelo.crearEmpleado(req.body);
+    res.status(201).json({ mensaje: "Empleado creado", id: nuevoId });
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al crear empleado", error });
+  }
 }
 
-async function actualizarEmpleado(req, res, next) {
+// Actualizar
+async function actualizarEmpleado(req, res) {
   try {
-    const id = req.params.id;
-    const { nombre_completo, documento, cargo, area, fecha_ingreso, estado } = req.body;
-    await pool.query('UPDATE empleados SET nombre_completo=?, documento=?, cargo=?, area=?, fecha_ingreso=?, estado=? WHERE id=?',
-      [nombre_completo, documento, cargo, area, fecha_ingreso, estado, id]);
-    res.json({ ok: true });
-  } catch (err) { next(err); }
+    const { id } = req.params;
+    const actualizado = await empleadoModelo.actualizarEmpleado(id, req.body);
+    if (!actualizado) {
+      return res.status(404).json({ mensaje: "Empleado no encontrado" });
+    }
+    res.json({ mensaje: "Empleado actualizado correctamente" });
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al actualizar empleado", error });
+  }
 }
 
-module.exports = { listarEmpleados, crearEmpleado, obtenerEmpleado, actualizarEmpleado };
+// Eliminar (lógicamente)
+async function eliminarEmpleado(req, res) {
+  try {
+    const { id } = req.params;
+    const eliminado = await empleadoModelo.eliminarEmpleado(id);
+    if (!eliminado) {
+      return res.status(404).json({ mensaje: "Empleado no encontrado" });
+    }
+    res.json({ mensaje: "Empleado marcado como inactivo" });
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al eliminar empleado", error });
+  }
+}
+
+module.exports = {
+  listarEmpleados,
+  obtenerEmpleado,
+  crearEmpleado,
+  actualizarEmpleado,
+  eliminarEmpleado,
+};
