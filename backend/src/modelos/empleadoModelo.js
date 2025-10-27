@@ -43,6 +43,12 @@ async function eliminarEmpleado(id) {
   const [resultado] = await pool.query("UPDATE empleados SET estado='inactivo' WHERE id=?", [id]);
   return resultado.affectedRows;
 }
+// Añadimos buscar por documento
+
+async function buscarPorDocumento(documento) {
+  const [filas] = await pool.query("SELECT * FROM empleados WHERE documento = ?", [documento]);
+  return filas[0];
+}
 
 module.exports = {
   obtenerEmpleados,
@@ -50,4 +56,5 @@ module.exports = {
   crearEmpleado,
   actualizarEmpleado,
   eliminarEmpleado,
+  buscarPorDocumento
 };
