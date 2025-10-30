@@ -1,64 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { Card, Button, Table, Form, Modal, Row, Col, Badge, InputGroup } from 'react-bootstrap';
 import './RRHHEmpleados.css';
+import { listarEmpleados, crearEmpleado, actualizarEmpleado, eliminarEmpleado } from '../services/empleadoService';
 
-// Datos simulados
-const empleadosIniciales = [
-  {
-    id: '1001',
-    nombre: 'Juan Pérez',
-    cedula: '12345678',
-    correo: 'juan.perez@empresa.com',
-    cargo: 'Analista',
-    area: 'Recursos Humanos',
-    fechaIngreso: '2022-01-15',
-    estado: 'Activo',
-    rol: 'Empleado',
-  },
-  {
-    id: '1002',
-    nombre: 'Ana Gómez',
-    cedula: '87654321',
-    correo: 'ana.gomez@empresa.com',
-    cargo: 'Supervisor',
-    area: 'Operaciones',
-    fechaIngreso: '2021-08-10',
-    estado: 'Inactivo',
-    rol: 'Supervisor',
-  },
-  {
-    id: '1003',
-    nombre: 'Carlos Ruiz',
-    cedula: '11223344',
-    correo: 'carlos.ruiz@empresa.com',
-    cargo: 'RRHH',
-    area: 'Recursos Humanos',
-    fechaIngreso: '2020-05-20',
-    estado: 'Activo',
-    rol: 'RRHH',
-  },
-];
-
+// Quitar datos simulados, usar backend
 const cargos = ['Analista', 'Supervisor', 'RRHH', 'Gerente'];
 const areas = ['Recursos Humanos', 'Operaciones', 'Finanzas', 'IT', 'Ventas'];
-const roles = ['Empleado', 'Supervisor', 'RRHH', 'Administrador'];
 const estados = ['Activo', 'Inactivo', 'Suspendido', 'Baja'];
 
 export default function RRHHEmpleados() {
-  const [empleados, setEmpleados] = useState(empleadosIniciales);
+  const [empleados, setEmpleados] = useState([]);
   const [filtros, setFiltros] = useState({ texto: '', cargo: '', area: '', estado: '' });
   const [showModal, setShowModal] = useState(false);
   const [editando, setEditando] = useState(null);
   const [showDetalle, setShowDetalle] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // Cargar empleados del backend
+  useEffect(() => {
+    cargarEmpleados();
+  }, []);
+
+  async function cargarEmpleados() {
+    setLoading(true);
+    try {
+      const list = await listarEmpleados();
+      setEmpleados(list);
+    } catch (err) {
+      console.error('Error al cargar empleados', err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   // Filtrado
   const empleadosFiltrados = empleados.filter(emp => {
     const texto = filtros.texto.toLowerCase();
     return (
-      (emp.nombre.toLowerCase().includes(texto) ||
-        emp.id.includes(texto) ||
-        emp.cedula.includes(texto)) &&
+      (emp.nombre_completo?.toLowerCase().includes(texto) ||
+        emp.id?.toString().includes(texto) ||
+        emp.documento?.includes(texto)) &&
       (filtros.cargo ? emp.cargo === filtros.cargo : true) &&
       (filtros.area ? emp.area === filtros.area : true) &&
       (filtros.estado ? emp.estado === filtros.estado : true)
@@ -70,52 +52,56 @@ export default function RRHHEmpleados() {
     setFiltros({ ...filtros, [e.target.name]: e.target.value });
   };
 
-  // Agregar o editar empleado
-  const handleGuardar = (e) => {
+  // Agregar o editar empleado via backend
+  const handleGuardar = async (e) => {
     e.preventDefault();
-    if (editando.id) {
-      setEmpleados(empleados.map(emp => emp.id === editando.id ? editando : emp));
-    } else {
-      setEmpleados([
-        { ...editando, id: Date.now().toString() },
-        ...empleados,
-      ]);
+    if (!editando) return;
+    setLoading(true);
+    try {
+      const payload = {
+        nombre_completo: editando.nombre,
+        documento: editando.cedula,
+        cargo: editando.cargo,
+        area: editando.area,
+        fecha_ingreso: editando.fechaIngreso,
+        estado: editando.estado
+      };
+      if (editando.id) {
+        await actualizarEmpleado(editando.id, payload);
+      } else {
+        await crearEmpleado(payload);
+      }
+      await cargarEmpleados(); // Recargar lista
+      setShowModal(false);
+      setEditando(null);
+    } catch (err) {
+      console.error('Error al guardar empleado', err);
+    } finally {
+      setLoading(false);
     }
-    setShowModal(false);
-    setEditando(null);
   };
 
-  // Cambiar estado
-  const handleEstado = (emp, nuevoEstado) => {
-    setEmpleados(empleados.map(e =>
-      e.id === emp.id ? { ...e, estado: nuevoEstado } : e
-    ));
-  };
-
-  // Eliminar empleado
-  const handleEliminar = (id) => {
+  // Eliminar empleado via backend
+  const handleEliminar = async (id) => {
     if (window.confirm('¿Seguro que deseas eliminar este empleado?')) {
-      setEmpleados(empleados.filter(e => e.id !== id));
+      try {
+        await eliminarEmpleado(id);
+        await cargarEmpleados();
+      } catch (err) {
+        console.error('Error al eliminar', err);
+      }
     }
   };
 
-  // Exportar a Excel (simulado)
-  const handleExportar = () => {
-    alert('Función de exportar lista a Excel/PDF lista para backend.');
-  };
-
-  // Render
+  // Render (quitar datos simulados, usar empleados del state)
   return (
     <Layout rrhhMenu>
       <div className="rrhh-empleados-container">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2>Gestión de Empleados</h2>
           <div>
-            <Button variant="success" className="me-2" onClick={() => { setEditando({ nombre: '', cedula: '', correo: '', cargo: '', area: '', fechaIngreso: '', estado: 'Activo', rol: 'Empleado' }); setShowModal(true); }}>
+            <Button variant="success" className="me-2" onClick={() => { setEditando({ nombre: '', cedula: '', correo: '', cargo: '', area: '', fechaIngreso: '', estado: 'Activo' }); setShowModal(true); }}>
               + Agregar Empleado
-            </Button>
-            <Button variant="outline-primary" onClick={handleExportar}>
-              Exportar Excel/PDF
             </Button>
           </div>
         </div>
@@ -126,7 +112,7 @@ export default function RRHHEmpleados() {
             <Row className="g-2">
               <Col md={3}>
                 <Form.Control
-                  placeholder="Buscar por nombre, ID o cédula"
+                  placeholder="Buscar por nombre, ID o documento"
                   name="texto"
                   value={filtros.texto}
                   onChange={handleFiltro}
@@ -154,64 +140,55 @@ export default function RRHHEmpleados() {
           </Card.Body>
         </Card>
 
-        {/* Tabla de empleados */}
+        {/* Tabla */}
         <Card className="shadow-sm">
           <Card.Body>
-            <Table responsive hover>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Cargo</th>
-                  <th>Área</th>
-                  <th>Correo</th>
-                  <th>Estado</th>
-                  <th>Rol</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {empleadosFiltrados.map(emp => (
-                  <tr key={emp.id}>
-                    <td>{emp.id}</td>
-                    <td>
-                      <Button variant="link" className="p-0" onClick={() => setShowDetalle(emp)}>
-                        {emp.nombre}
-                      </Button>
-                    </td>
-                    <td>{emp.cargo}</td>
-                    <td>{emp.area}</td>
-                    <td>{emp.correo}</td>
-                    <td>
-                      <Badge bg={
-                        emp.estado === 'Activo' ? 'success' :
-                        emp.estado === 'Inactivo' ? 'secondary' :
-                        emp.estado === 'Suspendido' ? 'warning' : 'danger'
-                      }>
-                        {emp.estado}
-                      </Badge>
-                    </td>
-                    <td>{emp.rol}</td>
-                    <td>
-                      <Button size="sm" variant="primary" className="me-1" onClick={() => { setEditando(emp); setShowModal(true); }}>Editar</Button>
-                      <Button size="sm" variant="warning" className="me-1" onClick={() => handleEstado(emp, emp.estado === 'Activo' ? 'Inactivo' : 'Activo')}>
-                        {emp.estado === 'Activo' ? 'Desactivar' : 'Activar'}
-                      </Button>
-                      <Button size="sm" variant="danger" onClick={() => handleEliminar(emp.id)}>Eliminar</Button>
-                    </td>
-                  </tr>
-                ))}
-                {empleadosFiltrados.length === 0 && (
+            {loading ? <p>Cargando...</p> : (
+              <Table responsive hover>
+                <thead>
                   <tr>
-                    <td colSpan={8} className="text-center text-muted">No se encontraron empleados.</td>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Cargo</th>
+                    <th>Área</th>
+                    <th>Correo</th>
+                    <th>Estado</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
                   </tr>
-                )}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {empleadosFiltrados.map(emp => (
+                    <tr key={emp.id}>
+                      <td>{emp.id}</td>
+                      <td>
+                        <Button variant="link" className="p-0" onClick={() => setShowDetalle(emp)}>
+                          {emp.nombre_completo}
+                        </Button>
+                      </td>
+                      <td>{emp.cargo}</td>
+                      <td>{emp.area}</td>
+                      <td>{emp.correo}</td>
+                      <td>
+                        <Badge bg={emp.estado === 'activo' ? 'success' : 'secondary'}>
+                          {emp.estado}
+                        </Badge>
+                      </td>
+                      <td>{emp.rol}</td>
+                      <td>
+                        <Button size="sm" variant="primary" className="me-1" onClick={() => { setEditando({ id: emp.id, nombre: emp.nombre_completo, cedula: emp.documento, cargo: emp.cargo, area: emp.area, fechaIngreso: emp.fecha_ingreso, estado: emp.estado }); setShowModal(true); }}>Editar</Button>
+                        <Button size="sm" variant="danger" onClick={() => handleEliminar(emp.id)}>Eliminar</Button>
+                      </td>
+                    </tr>
+                  ))}
+                  {empleadosFiltrados.length === 0 && <tr><td colSpan={8} className="text-center text-muted">No se encontraron empleados.</td></tr>}
+                </tbody>
+              </Table>
+            )}
           </Card.Body>
         </Card>
 
-        {/* Modal agregar/editar */}
+        {/* Modal agregar/editar (quitar campo rol, mapear nombres) */}
         <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
           <Modal.Header closeButton>
             <Modal.Title>{editando && editando.id ? 'Editar Empleado' : 'Agregar Empleado'}</Modal.Title>
@@ -222,42 +199,19 @@ export default function RRHHEmpleados() {
                 <Col md={6}>
                   <Form.Group className="mb-2">
                     <Form.Label>Nombre</Form.Label>
-                    <Form.Control
-                      required
-                      value={editando?.nombre || ''}
-                      onChange={e => setEditando({ ...editando, nombre: e.target.value })}
-                    />
+                    <Form.Control required value={editando?.nombre || ''} onChange={e => setEditando({ ...editando, nombre: e.target.value })} />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-2">
-                    <Form.Label>Cédula</Form.Label>
-                    <Form.Control
-                      required
-                      value={editando?.cedula || ''}
-                      onChange={e => setEditando({ ...editando, cedula: e.target.value })}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-2">
-                    <Form.Label>Correo</Form.Label>
-                    <Form.Control
-                      required
-                      type="email"
-                      value={editando?.correo || ''}
-                      onChange={e => setEditando({ ...editando, correo: e.target.value })}
-                    />
+                    <Form.Label>Documento</Form.Label>
+                    <Form.Control required value={editando?.cedula || ''} onChange={e => setEditando({ ...editando, cedula: e.target.value })} />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-2">
                     <Form.Label>Cargo</Form.Label>
-                    <Form.Select
-                      required
-                      value={editando?.cargo || ''}
-                      onChange={e => setEditando({ ...editando, cargo: e.target.value })}
-                    >
+                    <Form.Select required value={editando?.cargo || ''} onChange={e => setEditando({ ...editando, cargo: e.target.value })}>
                       <option value="">Seleccione...</option>
                       {cargos.map(c => <option key={c}>{c}</option>)}
                     </Form.Select>
@@ -266,11 +220,7 @@ export default function RRHHEmpleados() {
                 <Col md={6}>
                   <Form.Group className="mb-2">
                     <Form.Label>Área</Form.Label>
-                    <Form.Select
-                      required
-                      value={editando?.area || ''}
-                      onChange={e => setEditando({ ...editando, area: e.target.value })}
-                    >
+                    <Form.Select required value={editando?.area || ''} onChange={e => setEditando({ ...editando, area: e.target.value })}>
                       <option value="">Seleccione...</option>
                       {areas.map(a => <option key={a}>{a}</option>)}
                     </Form.Select>
@@ -279,36 +229,14 @@ export default function RRHHEmpleados() {
                 <Col md={6}>
                   <Form.Group className="mb-2">
                     <Form.Label>Fecha de Ingreso</Form.Label>
-                    <Form.Control
-                      type="date"
-                      required
-                      value={editando?.fechaIngreso || ''}
-                      onChange={e => setEditando({ ...editando, fechaIngreso: e.target.value })}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-2">
-                    <Form.Label>Rol</Form.Label>
-                    <Form.Select
-                      required
-                      value={editando?.rol || ''}
-                      onChange={e => setEditando({ ...editando, rol: e.target.value })}
-                    >
-                      <option value="">Seleccione...</option>
-                      {roles.map(r => <option key={r}>{r}</option>)}
-                    </Form.Select>
+                    <Form.Control type="date" required value={editando?.fechaIngreso || ''} onChange={e => setEditando({ ...editando, fechaIngreso: e.target.value })} />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-2">
                     <Form.Label>Estado</Form.Label>
-                    <Form.Select
-                      required
-                      value={editando?.estado || ''}
-                      onChange={e => setEditando({ ...editando, estado: e.target.value })}
-                    >
-                      {estados.map(e => <option key={e}>{e}</option>)}
+                    <Form.Select required value={editando?.estado || 'activo'} onChange={e => setEditando({ ...editando, estado: e.target.value })}>
+                      {estados.map(e => <option key={e} value={e.toLowerCase()}>{e}</option>)}
                     </Form.Select>
                   </Form.Group>
                 </Col>
@@ -316,7 +244,7 @@ export default function RRHHEmpleados() {
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
-              <Button type="submit" variant="primary">Guardar</Button>
+              <Button type="submit" variant="primary" disabled={loading}>{loading ? 'Guardando...' : 'Guardar'}</Button>
             </Modal.Footer>
           </Form>
         </Modal>
@@ -330,19 +258,17 @@ export default function RRHHEmpleados() {
             {showDetalle && (
               <>
                 <Row>
-                  <Col md={6}><b>Nombre:</b> {showDetalle.nombre}</Col>
-                  <Col md={6}><b>Cédula:</b> {showDetalle.cedula}</Col>
+                  <Col md={6}><b>Nombre:</b> {showDetalle.nombre_completo}</Col>
+                  <Col md={6}><b>Documento:</b> {showDetalle.documento}</Col>
                   <Col md={6}><b>Correo:</b> {showDetalle.correo}</Col>
                   <Col md={6}><b>Cargo:</b> {showDetalle.cargo}</Col>
                   <Col md={6}><b>Área:</b> {showDetalle.area}</Col>
-                  <Col md={6}><b>Fecha de Ingreso:</b> {showDetalle.fechaIngreso}</Col>
+                  <Col md={6}><b>Fecha de Ingreso:</b> {showDetalle.fecha_ingreso}</Col>
                   <Col md={6}><b>Estado:</b> {showDetalle.estado}</Col>
                   <Col md={6}><b>Rol:</b> {showDetalle.rol}</Col>
                 </Row>
                 <hr />
-                <div className="text-muted">
-                  <i>Historial, solicitudes, asistencias, formación, etc. (listo para backend)</i>
-                </div>
+                <div className="text-muted"><i>Historial, solicitudes, asistencias, formación, etc. (listo para backend)</i></div>
               </>
             )}
           </Modal.Body>
