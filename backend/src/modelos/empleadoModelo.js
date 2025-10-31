@@ -6,9 +6,9 @@
 
 const { pool } = require("../config/db");
 
-// Obtener todos los empleados
+// Obtener todos los empleados con JOIN para role_id, correo y rol mapeado
 async function obtenerEmpleados() {
-  const [filas] = await pool.query("SELECT * FROM empleados");
+  const [filas] = await pool.query("SELECT e.id, e.nombre_completo, e.documento, e.cargo, e.area, e.fecha_ingreso, e.estado, u.role_id, u.correo, CASE WHEN u.role_id = 1 THEN 'Administrador' WHEN u.role_id = 2 THEN 'RRHH' WHEN u.role_id = 3 THEN 'Empleado' ELSE 'Desconocido' END as rol FROM empleados e LEFT JOIN usuarios u ON e.usuario_id = u.id");
   return filas;
 }
 
@@ -43,8 +43,8 @@ async function eliminarEmpleado(id) {
   const [resultado] = await pool.query("UPDATE empleados SET estado='inactivo' WHERE id=?", [id]);
   return resultado.affectedRows;
 }
-// Añadimos buscar por documento
 
+// Añadimos buscar por documento
 async function buscarPorDocumento(documento) {
   const [filas] = await pool.query("SELECT * FROM empleados WHERE documento = ?", [documento]);
   return filas[0];

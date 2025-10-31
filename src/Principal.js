@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Row, Col, Button, Modal, Form, Container, Nav, Navbar, NavDropdown, Carousel } from 'react-bootstrap';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import api from './services/api';
 
 export default function Principal() {
   // Estados para los modales y usuarios registrados
@@ -39,16 +40,22 @@ export default function Principal() {
     setLoginData({ ...loginData, [name]: value });
   };
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    const usuarioEncontrado = usuarios.find(
-      (usuario) => usuario.email === loginData.email && usuario.password === loginData.password
-    );
-    if (usuarioEncontrado) {
-      alert(`Bienvenido, ${usuarioEncontrado.nombre}`);
-      navigate('/login'); // Redirigir a la página de Login
-    } else {
-      alert('Credenciales incorrectas');
+    try {
+      const response = await api.post('/auth/login', { correo: loginData.email, password: loginData.password });
+      const { token, usuario } = response.data;
+      localStorage.setItem('token', token); // Guardar token
+      localStorage.setItem('usuario', JSON.stringify(usuario)); // Guardar usuario para redirección
+      alert(`Bienvenido, ${usuario.correo}`);
+      // Redirigir basado en role_id: 1=Admin -> /rrhh, otros -> /login
+      if (usuario.role_id === 1) {
+        navigate('/rrhh');
+      } else {
+        navigate('/login');
+      }
+    } catch (error) {
+      alert('Credenciales incorrectas o error de conexión');
     }
   };
 

@@ -6,6 +6,7 @@ const empleadoRutas = require('./rutas/empleadoRutas');
 const solicitudRutas = require('./rutas/solicitudRutas');
 const nominaRutas = require('./rutas/nominaRutas');
 const manejadorErrores = require('./middlewares/manejadorErrores');
+const usuarioRutas = require('./rutas/usuarioRutas');
 
 const app = express();
 app.use(cors());
@@ -15,6 +16,7 @@ app.use('/api/auth', authRutas);
 app.use('/api/empleados', empleadoRutas);
 app.use('/api/solicitudes', solicitudRutas);
 app.use('/api/nominas', nominaRutas);
+app.use('/api/usuarios', usuarioRutas);
 
 app.get('/', (req, res) => res.send('JAD API OK'));
 
