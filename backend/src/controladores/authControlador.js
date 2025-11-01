@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 async function login(req, res, next) {
   try {
     const { correo, password } = req.body;
-    const [rows] = await pool.query('SELECT * FROM usuarios WHERE correo = ?', [correo]);
+    const [rows] = await pool.query('SELECT u.*, e.id as empleado_id FROM usuarios u LEFT JOIN empleados e ON u.id = e.usuario_id WHERE u.correo = ?', [correo]);
     const user = rows[0];
     if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });
 
@@ -13,8 +13,8 @@ async function login(req, res, next) {
     const valid = match || (password === user.password_hash); // fallback temporal
     if (!valid) return res.status(401).json({ error: 'Credenciales inválidas' });
 
-    const token = jwt.sign({ id: user.id, correo: user.correo, role_id: user.role_id }, process.env.JWT_SECRET, { expiresIn: '8h' });
-    res.json({ token, usuario: { id: user.id, correo: user.correo, role_id: user.role_id } });
+    const token = jwt.sign({ id: user.id, correo: user.correo, role_id: user.role_id, empleado_id: user.empleado_id }, process.env.JWT_SECRET, { expiresIn: '8h' });
+    res.json({ token, usuario: { id: user.id, correo: user.correo, role_id: user.role_id, empleado_id: user.empleado_id } });
   } catch (err) {
     next(err);
   }
