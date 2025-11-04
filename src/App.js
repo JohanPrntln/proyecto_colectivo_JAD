@@ -19,6 +19,7 @@ import RRHHSolicitudes from './rrhh/RRHHSolicitudes';
 import RRHHChats from './rrhh/RRHHChats';
 import RRHHAnuncios from './rrhh/RRHHAnuncios';
 import RRHHGestionEmpleados from './rrhh/RRHHGestionEmpleados';
+import RRHHNominas from './rrhh/RRHHNominas';
 import RRHHReportes from './rrhh/RRHHReportes';
 import RRHHConfiguracion from './rrhh/RRHHConfiguracion';
 // ...otras vistas RRHH
@@ -49,6 +50,7 @@ function App() {
         <Route path="/rrhh/chats" element={<RRHHChats />} />
         <Route path="/rrhh/anuncios" element={<RRHHAnuncios />} />
         <Route path="/rrhh/empleados" element={<RRHHGestionEmpleados />} />
+        <Route path="/rrhh/nominas" element={<RRHHNominas />} />
         <Route path="/rrhh/reportes" element={<RRHHReportes />} />
         <Route path="/rrhh/configuracion" element={<RRHHConfiguracion />} />
 
