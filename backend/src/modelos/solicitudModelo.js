@@ -2,10 +2,11 @@
 // MODELO DE SOLICITUDES
 // ==========================
 // Se encarga de interactuar con la base de datos MySQL para CRUD de solicitudes.
+// Incluye JOIN con empleados y usuarios para datos relacionados.
 
-const { pool } = require("../config/db");
+const { pool } = require("../config/db"); // Importa el pool de conexiones MySQL
 
-// Obtener todas las solicitudes (para RRHH o jefe)
+// Obtener todas las solicitudes (para RRHH o jefe) con JOIN a empleados y revisor
 async function obtenerSolicitudes() {
   const [rows] = await pool.query(`
     SELECT s.*, e.nombre_completo, e.area, u.correo AS revisado_por_correo
@@ -14,7 +15,7 @@ async function obtenerSolicitudes() {
     LEFT JOIN usuarios u ON s.revisado_por = u.id
     ORDER BY s.fecha_creacion DESC
   `);
-  return rows;
+  return rows; // Retorna lista de solicitudes con datos de empleado y revisor
 }
 
 // Obtener solicitudes de un empleado específico
@@ -23,7 +24,7 @@ async function obtenerSolicitudesPorEmpleado(empleadoId) {
     "SELECT * FROM solicitudes WHERE empleado_id = ? ORDER BY fecha_creacion DESC",
     [empleadoId]
   );
-  return rows;
+  return rows; // Retorna solicitudes del empleado logueado
 }
 
 // Crear nueva solicitud
@@ -39,16 +40,16 @@ async function crearSolicitud(datos) {
   } = datos;
 
   const [resultado] = await pool.query(
-    `INSERT INTO solicitudes 
+    `INSERT INTO solicitudes
       (empleado_id, tipo, fecha_inicio, fecha_fin, dias_solicitados, motivo, soporte)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
     [empleado_id, tipo, fecha_inicio, fecha_fin, dias_solicitados, motivo, soporte]
   );
 
-  return resultado.insertId;
+  return resultado.insertId; // Retorna el ID de la nueva solicitud
 }
 
-// Aprobar o rechazar solicitud
+// Aprobar o rechazar solicitud (actualiza estado, revisado_por, fecha_revision, remunerado)
 async function actualizarEstadoSolicitud(id, estado, revisado_por, remunerado) {
   const [resultado] = await pool.query(
     `UPDATE solicitudes
@@ -56,7 +57,7 @@ async function actualizarEstadoSolicitud(id, estado, revisado_por, remunerado) {
      WHERE id = ?`,
     [estado, revisado_por, remunerado, id]
   );
-  return resultado.affectedRows > 0;
+  return resultado.affectedRows > 0; // Retorna true si se actualizó al menos una fila
 }
 
 module.exports = {
@@ -64,4 +65,4 @@ module.exports = {
   obtenerSolicitudesPorEmpleado,
   crearSolicitud,
   actualizarEstadoSolicitud,
-};
+}; // Exporta las funciones para usar en controladores

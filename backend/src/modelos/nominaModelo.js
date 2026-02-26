@@ -2,10 +2,11 @@
 // MODELO DE NÓMINAS
 // ==========================
 // Se encarga de interactuar con la base de datos MySQL para CRUD de nóminas.
+// Incluye JOIN con empleados para obtener datos relacionados.
 
-const { pool } = require("../config/db");
+const { pool } = require("../config/db"); // Importa el pool de conexiones MySQL
 
-// Crear nueva nómina (usando transacción)
+// Crear nueva nómina (usando transacción para atomicidad)
 async function crearNomina(datos, connection) {
   const { empleado_id, periodo_inicio, periodo_fin, salario_base, deducciones, total_pagado } = datos;
   const [resultado] = await connection.query(
@@ -14,10 +15,10 @@ async function crearNomina(datos, connection) {
      VALUES (?, ?, ?, ?, ?, ?)`,
     [empleado_id, periodo_inicio, periodo_fin, salario_base, deducciones, total_pagado]
   );
-  return resultado.insertId;
+  return resultado.insertId; // Retorna el ID de la nueva nómina
 }
 
-// Obtener todas las nóminas con filtros opcionales
+// Obtener todas las nóminas con filtros opcionales (empleado, fechas)
 async function obtenerNominas(filtros = {}) {
   let sql = `
     SELECT n.*, e.nombre_completo, e.area
@@ -43,13 +44,13 @@ async function obtenerNominas(filtros = {}) {
     params.push(filtros.hasta);
   }
 
-  sql += " ORDER BY n.fecha_creacion DESC";
+  sql += " ORDER BY n.fecha_creacion DESC"; // Ordena por fecha de creación descendente
 
   const [rows] = await pool.query(sql, params);
-  return rows;
+  return rows; // Retorna lista de nóminas con datos de empleado
 }
 
-// Obtener nómina por ID
+// Obtener nómina por ID con JOIN a empleados
 async function obtenerNominaPorId(id) {
   const [rows] = await pool.query(`
     SELECT n.*, e.nombre_completo, e.area
@@ -57,16 +58,16 @@ async function obtenerNominaPorId(id) {
     JOIN empleados e ON n.empleado_id = e.id
     WHERE n.id = ?
   `, [id]);
-  return rows[0];
+  return rows[0]; // Retorna la nómina o undefined si no existe
 }
 
-// Verificar si existe nómina duplicada
+// Verificar si existe nómina duplicada para evitar duplicados
 async function verificarDuplicado(empleado_id, periodo_inicio, periodo_fin) {
   const [rows] = await pool.query(
     "SELECT id FROM nominas WHERE empleado_id = ? AND periodo_inicio = ? AND periodo_fin = ?",
     [empleado_id, periodo_inicio, periodo_fin]
   );
-  return rows.length > 0;
+  return rows.length > 0; // Retorna true si ya existe una nómina para ese período
 }
 
 module.exports = {
@@ -74,4 +75,4 @@ module.exports = {
   obtenerNominas,
   obtenerNominaPorId,
   verificarDuplicado,
-};
+}; // Exporta las funciones para usar en controladores
