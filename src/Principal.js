@@ -80,7 +80,7 @@ export default function Principal() {
                 </NavDropdown>
               </Nav>
               <Nav>
-                <Nav.Link onClick={handleRegistroShow}>Registrarse</Nav.Link>
+                
                 <Nav.Link onClick={handleLoginShow}>Acceder</Nav.Link>
               </Nav>
             </Navbar.Collapse>

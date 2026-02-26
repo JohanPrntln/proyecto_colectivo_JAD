@@ -1,44 +1,95 @@
-const { pool } = require('../config/db');
+// ==========================
+// CONTROLADOR DE SOLICITUDES
+// ==========================
+// Recibe las solicitudes HTTP del frontend y llama al modelo.
+// Incluye validaciones y manejo de errores.
 
-async function crearSolicitud(req, res, next) {
+const solicitudModelo = require("../modelos/solicitudModelo");
+const { pool } = require("../config/db");
+
+// Listar todas (solo RRHH o jefe)
+async function listarSolicitudes(req, res) {
   try {
-    const usuarioId = req.usuario.id;
-    const [emps] = await pool.query('SELECT id FROM empleados WHERE usuario_id = ?', [usuarioId]);
-    if (!emps.length) return res.status(400).json({ error: 'Empleado no encontrado' });
-    const empleado_id = emps[0].id;
-    const { tipo, fecha_inicio, fecha_fin, dias_solicitados, motivo, soporte } = req.body;
-    const [r] = await pool.query(
-      'INSERT INTO solicitudes (empleado_id, tipo, fecha_inicio, fecha_fin, dias_solicitados, motivo, soporte) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [empleado_id, tipo, fecha_inicio, fecha_fin, dias_solicitados || null, motivo || null, soporte || null]
-    );
-    res.status(201).json({ id: r.insertId });
-  } catch (err) { next(err); }
+    const solicitudes = await solicitudModelo.obtenerSolicitudes();
+    res.json(solicitudes);
+  } catch (error) {
+    console.error("Error al listar solicitudes:", error);
+    res.status(500).json({ mensaje: "Error al listar solicitudes" });
+  }
 }
 
-async function listarSolicitudes(req, res, next) {
+// Listar solo las del empleado logueado
+async function listarSolicitudesEmpleado(req, res) {
   try {
-    if (req.usuario.role_id === 3) {
-      const [emps] = await pool.query('SELECT id FROM empleados WHERE usuario_id = ?', [req.usuario.id]);
-      if (!emps.length) return res.json([]);
-      const empleado_id = emps[0].id;
-      const [rows] = await pool.query('SELECT * FROM solicitudes WHERE empleado_id = ? ORDER BY fecha_creacion DESC', [empleado_id]);
-      return res.json(rows);
-    } else {
-      const [rows] = await pool.query('SELECT s.*, e.nombre_completo FROM solicitudes s JOIN empleados e ON s.empleado_id = e.id ORDER BY s.fecha_creacion DESC');
-      return res.json(rows);
+    const empleadoId = req.usuario?.empleado_id; // del token
+    if (!empleadoId)
+      return res.status(403).json({ mensaje: "Empleado no identificado" });
+
+    const solicitudes = await solicitudModelo.obtenerSolicitudesPorEmpleado(empleadoId);
+    res.json(solicitudes);
+  } catch (error) {
+    console.error("Error al listar solicitudes del empleado:", error);
+    res.status(500).json({ mensaje: "Error al listar solicitudes del empleado" });
+  }
+}
+
+// Crear una solicitud
+async function crearSolicitud(req, res) {
+  try {
+    if (!req.usuario || !req.usuario.empleado_id) {
+      return res.status(403).json({ mensaje: "Empleado no identificado en el token" });
     }
-  } catch (err) { next(err); }
+    const nuevaSolicitud = await solicitudModelo.crearSolicitud({
+      empleado_id: req.usuario.empleado_id,
+      ...req.body
+    });
+
+    // Registrar auditoría
+    await pool.query(
+      `INSERT INTO auditoria (usuario_id, accion, detalle)
+       VALUES (?, 'Creación de solicitud', 'ID solicitud: ${nuevaSolicitud}')`,
+      [req.usuario?.id || null]
+    );
+
+    res.status(201).json({ mensaje: "Solicitud creada correctamente", id: nuevaSolicitud });
+  } catch (error) {
+    console.error("Error al crear solicitud:", error);
+    res.status(500).json({ mensaje: "Error al crear solicitud" });
+  }
 }
 
-async function revisarSolicitud(req, res, next) {
+// Aprobar o rechazar solicitud
+async function actualizarEstado(req, res) {
   try {
-    const id = req.params.id;
-    const { accion } = req.body; // 'aprobar'|'rechazar'
-    if (!['aprobar','rechazar'].includes(accion)) return res.status(400).json({ error: 'Acción inválida' });
-    const estado = accion === 'aprobar' ? 'aprobado' : 'rechazado';
-    await pool.query('UPDATE solicitudes SET estado = ?, revisado_por = ?, fecha_revision = NOW() WHERE id = ?', [estado, req.usuario.id, id]);
-    res.json({ ok: true });
-  } catch (err) { next(err); }
+    const { id } = req.params;
+    const { estado, remunerado } = req.body;
+
+    const ok = await solicitudModelo.actualizarEstadoSolicitud(
+      id,
+      estado,
+      req.usuario?.id || null,
+      remunerado
+    );
+
+    if (!ok) return res.status(404).json({ mensaje: "Solicitud no encontrada" });
+
+    // Registrar en auditoría
+    await pool.query(
+      `INSERT INTO auditoria (usuario_id, accion, detalle)
+       VALUES (?, 'Cambio de estado de solicitud', 'Solicitud ${id} -> ${estado}')`,
+      [req.usuario?.id || null]
+    );
+
+    res.json({ mensaje: "Estado actualizado correctamente" });
+  } catch (error) {
+    console.error("Error al actualizar estado de solicitud:", error);
+    res.status(500).json({ mensaje: "Error al actualizar estado" });
+  }
 }
 
-module.exports = { crearSolicitud, listarSolicitudes, revisarSolicitud };
+module.exports = {
+  listarSolicitudes,
+  listarSolicitudesEmpleado,
+  crearSolicitud,
+  actualizarEstado,
+};

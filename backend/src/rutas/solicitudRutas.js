@@ -1,10 +1,14 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const autenticar = require('../middlewares/autenticar');
-const { crearSolicitud, listarSolicitudes, revisarSolicitud } = require('../controladores/solicitudControlador');
+const ctrl = require("../controladores/solicitudControlador");
+const autenticar = require("../middlewares/autenticar");
+const { esAdmin, esJefe } = require("../middlewares/roles");
 
-router.post('/', autenticar, crearSolicitud);
-router.get('/', autenticar, listarSolicitudes);
-router.post('/:id/revisar', autenticar, revisarSolicitud);
+// Rutas protegidas
+router.get("/", autenticar, esJefe, ctrl.listarSolicitudes);
+router.get("/mias", autenticar, ctrl.listarSolicitudesEmpleado);
+router.post("/", autenticar, ctrl.crearSolicitud);
+router.put("/:id", autenticar, esJefe, ctrl.actualizarEstado);
 
 module.exports = router;
+

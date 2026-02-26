@@ -46,6 +46,25 @@ export default function RRHHDashboard() {
             </Card>
           </Col>
 
+          {/* Gestión de nóminas */}
+          <Col md={4}>
+            <Card className="feature-card">
+              <Card.Body>
+                <Card.Title>Gestión de Nóminas</Card.Title>
+                <Card.Text>
+                  Genera y administra las nóminas de los empleados.
+                </Card.Text>
+                <Button
+                  variant="info"
+                  onClick={() => window.location.href = '/rrhh/nominas'}
+                >
+                  Ver
+                </Button>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+        <Row className="mt-4">
           {/* Gestión de anuncios */}
           <Col md={4}>
             <Card className="feature-card">

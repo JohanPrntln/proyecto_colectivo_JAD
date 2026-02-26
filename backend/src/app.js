@@ -1,25 +1,31 @@
-const express = require('express');
-const cors = require('cors');
+// app.js - Configuración principal de la aplicación Express para JAD
+// Configura Express, importa rutas y middlewares, define endpoint raíz.
 
-const authRutas = require('./rutas/authRutas');
-const empleadoRutas = require('./rutas/empleadoRutas');
-const solicitudRutas = require('./rutas/solicitudRutas');
-const nominaRutas = require('./rutas/nominaRutas');
-const manejadorErrores = require('./middlewares/manejadorErrores');
-const usuarioRutas = require('./rutas/usuarioRutas');
+const express = require('express'); // Framework web para Node.js
+const cors = require('cors'); // Middleware para CORS
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+const authRutas = require('./rutas/authRutas'); // Rutas de autenticación
+const empleadoRutas = require('./rutas/empleadoRutas'); // Rutas de empleados
+const solicitudRutas = require('./rutas/solicitudRutas'); // Rutas de solicitudes
+const nominaRutas = require('./rutas/nominaRutas'); // Rutas de nóminas
+const manejadorErrores = require('./middlewares/manejadorErrores'); // Middleware de errores
+const usuarioRutas = require('./rutas/usuarioRutas'); // Rutas de usuarios
 
-app.use('/api/auth', authRutas);
-app.use('/api/empleados', empleadoRutas);
-app.use('/api/solicitudes', solicitudRutas);
-app.use('/api/nominas', nominaRutas);
-app.use('/api/usuarios', usuarioRutas);
+const app = express(); // Instancia de Express
+app.use(cors()); // Habilita CORS
+app.use(express.json()); // Parsea JSON
 
+// Registro de rutas
+app.use('/api/auth', authRutas); // /api/auth
+app.use('/api/empleados', empleadoRutas); // /api/empleados
+app.use('/api/solicitudes', solicitudRutas); // /api/solicitudes
+app.use('/api/nominas', nominaRutas); // /api/nominas
+app.use('/api/usuarios', usuarioRutas); // /api/usuarios
+
+// Endpoint raíz
 app.get('/', (req, res) => res.send('JAD API OK'));
 
+// Middleware de errores
 app.use(manejadorErrores);
 
-module.exports = app;
+module.exports = app; // Exporta para server.js
